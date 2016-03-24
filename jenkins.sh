@@ -2,7 +2,9 @@
 
 set -e
 
-# Copy files from /usr/share/jenkins/ref into $JENKINS_HOME
+chown jenkins:jenkins /var/jenkins_home
+# Copy files from /usr/share/jenkins/ref into /var/jenkins_home
+
 # So the initial JENKINS-HOME is set with expected content.
 # Don't override, as this is just a reference setup, and use from UI
 # can then change this, upgrade plugins, etc.
