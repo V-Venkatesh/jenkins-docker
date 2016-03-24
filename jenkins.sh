@@ -3,6 +3,8 @@
 set -e
 
 chown jenkins:jenkins /var/jenkins_home
+
+su jenkins
 # Copy files from /usr/share/jenkins/ref into /var/jenkins_home
 
 # So the initial JENKINS-HOME is set with expected content.
