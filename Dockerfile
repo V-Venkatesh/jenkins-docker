@@ -1,6 +1,6 @@
 FROM java:8-jdk
 
-RUN apt-get update && apt-get install -y git curl zip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget git curl zip && rm -rf /var/lib/apt/lists/*
 
 ENV JENKINS_HOME /var/jenkins_home
 ENV JENKINS_SLAVE_AGENT_PORT 50000
@@ -28,26 +28,23 @@ RUN mkdir -p /usr/share/jenkins/ref/init.groovy.d
 ENV TINI_SHA 066ad710107dc7ee05d3aa6e4974f01dc98f3888
 
 # Use tini as subreaper in Docker container to adopt zombie processes 
-RUN curl -fsSL https://github.com/krallin/tini/releases/download/v0.5.0/tini-static -o /bin/tini && chmod +x /bin/tini \
-  && echo "$TINI_SHA  /bin/tini" | sha1sum -c -
+RUN curl -fL https://github.com/krallin/tini/releases/download/v0.5.0/tini-static -o /bin/tini && chmod +x /bin/tini \
+  && echo "$TINI_SHA /bin/tini" | sha1sum -c -
 
 COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
 
-ENV JENKINS_VERSION 2.0-beta-1
-ENV JENKINS_SHA ee60952941668f2b08b668b58c19e0b0ecee16df
+ARG JENKINS_VERSION
+ENV JENKINS_VERSION ${JENKINS_VERSION:-2.0-beta-2}
+ARG JENKINS_SHA
+ENV JENKINS_SHA ${JENKINS_SHA:-55c08fd3d53a34998daab25c2e6b638b7d479d29}
 
 
 # could use ADD but this one does not check Last-Modified header 
 # see https://github.com/docker/docker/issues/8331
-<<<<<<< 758cd6087f1fa6e3d277898767e4222da10c0b3d
-RUN curl -fsSL http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war -o /usr/share/jenkins/jenkins.war \
-  && echo "$JENKINS_SHA  /usr/share/jenkins/jenkins.war" | sha1sum -c -
-=======
 RUN curl -fL http://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war -o /usr/share/jenkins/jenkins.war \
   && echo "$JENKINS_SHA /usr/share/jenkins/jenkins.war" | sha1sum -c -
->>>>>>> 2.0-alpha-1 to build 2.0 preview images
 
-ENV JENKINS_UC https://updates.jenkins.io
+ENV JENKINS_UC https://updates.jenkins-ci.org
 RUN chown -R ${user} "$JENKINS_HOME" /usr/share/jenkins/ref
 
 # for main web interface:
