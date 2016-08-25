@@ -3,7 +3,7 @@
 set -e
 
 # Copy files from /usr/share/jenkins/ref into $JENKINS_HOME
-chown jenkins:jenkins "$JENKINS_HOME"
+chown root:root "$JENKINS_HOME"
 
 su jenkins
 
